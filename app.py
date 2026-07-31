@@ -7,18 +7,38 @@ tools.py, .env, etc. Then run:
     streamlit run app.py
 """
 
+import os
 import traceback
 
 import streamlit as st
 
 from main_pipeline import run_resarch_pipeline
-for _key in ("MISTRAL_API_KEY","TAVILY_API_KEY"):
+
+# ----------------------------------------------------------------------
+# Load required secrets: prefer real env vars (local .env via python-dotenv
+# in main_pipeline/agents), fall back to Streamlit Cloud's st.secrets.
+# ----------------------------------------------------------------------
+REQUIRED_KEYS = ("MISTRAL_API_KEY", "TAVILY_API_KEY")
+missing_keys = []
+for _key in REQUIRED_KEYS:
     if not os.getenv(_key):
         try:
             if _key in st.secrets:
                 os.environ[_key] = st.secrets[_key]
+            else:
+                missing_keys.append(_key)
         except Exception:
-            pass 
+            missing_keys.append(_key)
+
+if missing_keys:
+    st.error(
+        "Missing required secret(s): "
+        + ", ".join(missing_keys)
+        + ". Add them under your Streamlit Cloud app's Settings → Secrets, "
+        "or in a local .env file."
+    )
+    st.stop()
+
 # ----------------------------------------------------------------------
 # Page setup
 # ----------------------------------------------------------------------
