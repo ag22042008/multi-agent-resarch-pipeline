@@ -3,7 +3,7 @@ langchain
 langchain-core
 langchain-community
 langchain-mistralai
-
+os
 
 
 # Tavily Search Tool
