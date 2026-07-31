@@ -8,15 +8,24 @@ tools.py, .env, etc. Then run:
 """
 
 import os
-import traceback
 
 import streamlit as st
 
-from main_pipeline import run_resarch_pipeline
+# ----------------------------------------------------------------------
+# Page setup — must be the first Streamlit command in the script.
+# ----------------------------------------------------------------------
+st.set_page_config(
+    page_title="Inkling — Research Pipeline",
+    page_icon="🖋️",
+    layout="wide",
+)
 
 # ----------------------------------------------------------------------
-# Load required secrets: prefer real env vars (local .env via python-dotenv
-# in main_pipeline/agents), fall back to Streamlit Cloud's st.secrets.
+# Load required secrets into the real environment BEFORE importing
+# main_pipeline/agents below. This has to happen first: if agents.py
+# builds its Mistral/Tavily clients at module import time, they read
+# os.getenv(...) the moment they're imported — importing main_pipeline
+# before this loop runs would hand those clients an empty key.
 # ----------------------------------------------------------------------
 REQUIRED_KEYS = ("MISTRAL_API_KEY", "TAVILY_API_KEY")
 missing_keys = []
@@ -39,14 +48,9 @@ if missing_keys:
     )
     st.stop()
 
-# ----------------------------------------------------------------------
-# Page setup
-# ----------------------------------------------------------------------
-st.set_page_config(
-    page_title="Inkling — Research Pipeline",
-    page_icon="🖋️",
-    layout="wide",
-)
+import traceback  # noqa: E402
+
+from main_pipeline import run_resarch_pipeline  # noqa: E402
 
 # ----------------------------------------------------------------------
 # Style — one deep ink-plum theme, top to bottom. No white anywhere:
