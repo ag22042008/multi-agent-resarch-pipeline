@@ -12,7 +12,13 @@ import traceback
 import streamlit as st
 
 from main_pipeline import run_resarch_pipeline
-
+for _key in ("MISTRAL_API_KEY","TAVILY_API_KEY"):
+    if not os.getenv(_key):
+        try:
+            if _key in st.secrets:
+                os.environ[_key] = st.secrets[_key]
+        except Exception:
+            pass 
 # ----------------------------------------------------------------------
 # Page setup
 # ----------------------------------------------------------------------
