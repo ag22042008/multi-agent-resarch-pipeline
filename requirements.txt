@@ -1,41 +1,22 @@
- # Core LLM + LangChain ecosystem
-langchain
-langchain-core
-langchain-community
-langchain-mistralai
-os
+# --- UI ---
+streamlit>=1.38.0
 
+# --- Core orchestration (agents.py builds LangGraph agents + LCEL chains) ---
+langchain>=0.3.0
+langchain-core>=0.3.0
+langgraph>=0.2.0
 
-# Tavily Search Tool
-tavily-python>=0.3.0
+# --- LLM provider: Mistral AI ---
+langchain-mistralai>=0.2.0
 
-# Web scraping
+# --- Search agent: Tavily ---
+tavily-python>=0.5.0
+langchain-community>=0.3.0   # needed if using langchain_community.tools.TavilySearchResults
+
+# --- Reader agent: scraping ---
+requests>=2.32.0
 beautifulsoup4>=4.12.0
-requests>=2.31.0
-lxml>=5.0.0
+lxml>=5.3.0                  # faster/more robust HTML parser for BeautifulSoup
 
-# Environment variables
+# --- Config ---
 python-dotenv>=1.0.0
-
-# Async support (important for agents/tools)
-aiohttp>=3.9.0
-
-# Data handling (optional but useful in pipelines)
-pandas>=2.0.0
-
-# Token counting / text utils
-tiktoken>=0.6.0
-
-# Logging / debugging (optional but recommended)
-rich>=13.7.0
-
-# Retry + robustness
-tenacity>=8.2.0
-
-
-
-# Typing support (helps in bigger projects)
-pydantic>=2.5.0
-
-# Optional (for advanced parsing / HTML cleanup)
-html5lib>=1.1
