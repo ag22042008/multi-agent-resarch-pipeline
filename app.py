@@ -23,10 +23,10 @@ st.set_page_config(
 )
 
 # ----------------------------------------------------------------------
-# Style — a two-tone "ink meets paper" concept: a dark rail carries the
-# brand and the pipeline steps, a warm paper canvas is where the topic
-# goes in and the report comes out. Wax-seal red is the one accent color;
-# everything else stays quiet.
+# Style — one deep ink-plum theme, top to bottom. No white anywhere:
+# text is warm ivory, panels are shades of plum, the only accent is a
+# lit-candle amber. Every Streamlit element gets an explicit color so
+# nothing can inherit a theme default and go invisible.
 # ----------------------------------------------------------------------
 st.markdown(
     """
@@ -34,36 +34,41 @@ st.markdown(
     @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap');
 
     :root {
-        --ink-900: #12181F;
-        --ink-700: #232C36;
-        --ink-100: #E7ECEF;
-        --paper: #FBF9F4;
-        --paper-line: #E4DFD3;
-        --text: #201C18;
-        --muted: #7A756B;
-        --accent: #8C2F3B;
-        --accent-soft: #F3E3E4;
+        --bg: #16132B;
+        --panel: #1E1938;
+        --panel-alt: #241F44;
+        --code-bg: #100D22;
+        --text: #F1EDE4;
+        --muted: #A79FC2;
+        --accent: #E8A33D;
+        --accent-soft: rgba(232, 163, 61, 0.16);
+        --border: rgba(241, 237, 228, 0.12);
     }
 
-    .stApp { background: var(--paper); }
-    html, body, [class*="css"] { font-family: 'Inter', sans-serif; color: var(--text); }
-    h1, h2, h3 { font-family: 'Fraunces', serif !important; color: var(--text) !important; letter-spacing: -0.01em; }
+    /* ---- blanket reset so nothing can render invisible ---- */
+    .stApp, .stApp * { color: var(--text) !important; }
+    .stApp { background: var(--bg) !important; }
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    ::selection { background: var(--accent-soft); }
 
-    /* --- rail (first column) --- */
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--panel-alt); border-radius: 6px; }
+
+    h1, h2, h3 { font-family: 'Fraunces', serif !important; letter-spacing: -0.01em; }
+    hr { border-color: var(--border) !important; }
+
+    /* ---- rail (first column) ---- */
     [data-testid="stColumn"]:nth-of-type(1) {
-        background: var(--ink-900);
+        background: radial-gradient(120% 90% at 20% 0%, var(--panel-alt) 0%, var(--panel) 60%);
+        border: 1px solid var(--border);
         border-radius: 18px;
         padding: 1.8rem 1.4rem;
         min-height: 560px;
     }
-    [data-testid="stColumn"]:nth-of-type(1) * { color: var(--ink-100) !important; }
-    [data-testid="stColumn"]:nth-of-type(1) h1,
-    [data-testid="stColumn"]:nth-of-type(1) h2,
-    [data-testid="stColumn"]:nth-of-type(1) h3 { color: var(--ink-100) !important; }
     [data-testid="stColumn"]:nth-of-type(1) [data-testid="stButton"] button {
         background: transparent !important;
-        border: 1px solid rgba(231,236,239,0.25) !important;
-        color: var(--ink-100) !important;
+        border: 1px solid var(--border) !important;
         font-size: 0.78rem !important;
         font-weight: 500 !important;
         padding: 0.35rem 0.7rem !important;
@@ -71,65 +76,89 @@ st.markdown(
     }
     [data-testid="stColumn"]:nth-of-type(1) [data-testid="stButton"] button:hover {
         border-color: var(--accent) !important;
-        color: white !important;
+        color: var(--accent) !important;
     }
 
-    /* --- canvas (second column) --- */
+    /* ---- canvas (second column) ---- */
     [data-testid="stColumn"]:nth-of-type(2) {
-        background: var(--paper);
-        border: 1px solid var(--paper-line);
+        background: var(--panel);
+        border: 1px solid var(--border);
         border-radius: 18px;
         padding: 2rem 2.2rem;
     }
 
     .brand-mark { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.2rem; }
-    .brand-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.5rem; color: var(--ink-100); }
-    .brand-tag { font-size: 0.8rem; color: #A9B0B6; margin-top: -0.3rem; margin-bottom: 1.6rem; }
+    .brand-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.5rem !important; }
+    .brand-tag { font-size: 0.8rem !important; color: var(--muted) !important; margin: 0 0 1.6rem; }
+    .logo-glow { filter: drop-shadow(0 0 6px rgba(232,163,61,0.55)); animation: pulse 2.6s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
 
     .rail-label {
-        font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+        font-family: 'JetBrains Mono', monospace; font-size: 0.68rem !important;
         letter-spacing: 0.12em; text-transform: uppercase;
-        color: #A9B0B6; margin: 1.4rem 0 0.6rem;
+        color: var(--muted) !important; margin: 1.4rem 0 0.8rem;
     }
 
-    .vstep { display: flex; gap: 0.7rem; align-items: flex-start; margin-bottom: 0.9rem; }
+    .vstep { display: flex; gap: 0.7rem; align-items: flex-start; margin-bottom: 0.55rem; position: relative; }
+    .vstep:not(:first-child)::before {
+        content: ""; position: absolute; top: -18px; left: 12px; width: 2px; height: 18px;
+        background: repeating-linear-gradient(180deg, var(--accent) 0 4px, transparent 4px 8px);
+        background-size: 2px 16px; animation: flow 0.8s linear infinite;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .vstep:not(:first-child)::before, .logo-glow { animation: none !important; }
+    }
+    @keyframes flow { from { background-position: 0 0; } to { background-position: 0 16px; } }
     .vstep .num {
         flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
         border: 1.5px solid var(--accent); color: var(--accent) !important;
         display: flex; align-items: center; justify-content: center;
-        font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600;
-        background: transparent;
+        font-family: 'JetBrains Mono', monospace; font-size: 0.7rem !important; font-weight: 600;
+        background: var(--panel); position: relative; z-index: 1;
     }
-    .vstep .txt .t { font-weight: 600; font-size: 0.88rem; }
-    .vstep .txt .d { font-size: 0.76rem; color: #A9B0B6 !important; }
+    .vstep .txt .t { font-weight: 600; font-size: 0.88rem !important; }
+    .vstep .txt .d { font-size: 0.76rem !important; color: var(--muted) !important; }
 
     .eyebrow {
-        font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+        font-family: 'JetBrains Mono', monospace; font-size: 0.72rem !important;
         letter-spacing: 0.12em; text-transform: uppercase;
-        color: var(--accent); margin-bottom: 0.3rem;
+        color: var(--accent) !important; margin-bottom: 0.3rem;
     }
-    .subtitle { color: var(--muted); font-size: 1rem; margin-top: -0.5rem; margin-bottom: 1.4rem; }
+    .subtitle { color: var(--muted) !important; font-size: 1rem !important; margin: -0.4rem 0 1.4rem; }
 
     .badge {
         display: inline-block; font-family: 'JetBrains Mono', monospace;
-        font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
-        color: var(--accent); background: var(--accent-soft);
+        font-size: 0.7rem !important; letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--accent) !important; background: var(--accent-soft);
         border-radius: 999px; padding: 0.25rem 0.7rem; margin-bottom: 0.7rem;
     }
 
-    [data-testid="stColumn"]:nth-of-type(2) [data-testid="stTextInput"] input {
-        border-radius: 8px; border: 1px solid var(--paper-line);
-        padding: 0.6rem 0.8rem; font-family: 'Inter', sans-serif; background: white;
+    /* ---- inputs, buttons, alerts, code, expanders — explicit, theme-proof ---- */
+    [data-testid="stTextInput"] input {
+        border-radius: 8px !important; border: 1px solid var(--border) !important;
+        padding: 0.6rem 0.8rem !important; background: var(--panel-alt) !important;
     }
-    [data-testid="stColumn"]:nth-of-type(2) [data-testid="stButton"] button {
-        background: var(--accent) !important; color: white !important; border: none !important;
+    [data-testid="stTextInput"] input::placeholder { color: var(--muted) !important; opacity: 1; }
+
+    [data-testid="stColumn"]:nth-of-type(2) [data-testid="stButton"] button,
+    [data-testid="stDownloadButton"] button {
+        background: var(--accent) !important; color: var(--bg) !important; border: none !important;
         border-radius: 8px !important; font-weight: 600 !important; padding: 0.6rem 1.2rem !important;
     }
-    [data-testid="stColumn"]:nth-of-type(2) [data-testid="stButton"] button:hover {
-        background: #6E2530 !important;
+    [data-testid="stColumn"]:nth-of-type(2) [data-testid="stButton"] button:hover,
+    [data-testid="stDownloadButton"] button:hover { background: #F0B65E !important; }
+
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background: var(--panel-alt) !important; border-color: var(--border) !important; border-radius: 12px !important;
     }
 
-    [data-testid="stExpander"] pre { font-family: 'JetBrains Mono', monospace !important; font-size: 0.82rem !important; }
+    [data-testid="stAlert"] { background: var(--panel-alt) !important; border: 1px solid var(--border) !important; border-radius: 10px !important; }
+
+    [data-testid="stExpander"] { background: var(--panel-alt) !important; border: 1px solid var(--border) !important; border-radius: 10px !important; }
+    [data-testid="stExpander"] pre, [data-testid="stExpander"] code {
+        background: var(--code-bg) !important; font-family: 'JetBrains Mono', monospace !important; font-size: 0.82rem !important;
+    }
+    [data-testid="stCodeBlock"] pre, [data-testid="stCodeBlock"] code { background: var(--code-bg) !important; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -164,9 +193,9 @@ with rail:
     st.markdown(
         """
         <div class="brand-mark">
-            <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 2C13 2 7 9.5 7 14.5C7 18.09 9.69 21 13 21C16.31 21 19 18.09 19 14.5C19 9.5 13 2 13 2Z" fill="#8C2F3B"/>
-                <path d="M13 21V24" stroke="#8C2F3B" stroke-width="1.5" stroke-linecap="round"/>
+            <svg class="logo-glow" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path style="fill:#E8A33D" d="M13 2C13 2 7 9.5 7 14.5C7 18.09 9.69 21 13 21C16.31 21 19 18.09 19 14.5C19 9.5 13 2 13 2Z"/>
+                <path style="stroke:#E8A33D" stroke-width="1.5" stroke-linecap="round" d="M13 21V24"/>
             </svg>
             <span class="brand-name">Inkling</span>
         </div>
