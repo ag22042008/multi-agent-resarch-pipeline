@@ -97,4 +97,4 @@ MIT — feel free to fork and adapt.
 
 ## Author
 
-Built by **[Your Name]** — [GitHub](#) · [LinkedIn](#)
+Built by **[AdityaGupta]** — [https://github.com/ag22042008](#github) · [www.linkedin.com/in/aditya-gupta-205ba9281](#Linkedin)
