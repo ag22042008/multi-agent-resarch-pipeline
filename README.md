@@ -19,6 +19,32 @@ Inkling isn't one model doing everything — it's four agents handing work off t
 
 The full shared state (search results, scraped content, report, and feedback) is returned at the end, so nothing along the way is thrown away.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    U([User enters a topic]) --> S
+
+    subgraph Pipeline["main_pipeline.py"]
+        direction LR
+        S["🔍 Search Agent\nbuild_search_agent()\nLangGraph + Tavily"] --> R["📖 Reader Agent\nbuild_reader_agent()\nLangGraph + BeautifulSoup"]
+        R --> W["✍️ Writer Chain\nwriter_chain\nLCEL + Mistral AI"]
+        W --> C["🧐 Critic Chain\ncritic_chain\nLCEL + Mistral AI"]
+    end
+
+    S -. search_results .-> ST[(Shared state dict)]
+    R -. scraped_content .-> ST
+    W -. report .-> ST
+    C -. feedback .-> ST
+
+    ST --> UI["🎨 Streamlit UI\napp.py"]
+
+    classDef agent fill:#241F44,stroke:#E8A33D,color:#F1EDE4,stroke-width:1px;
+    class S,R,W,C agent;
+```
+
+Each stage is invoked, writes its output into one shared `state` dict, and hands off to the next — nothing is re-derived, and the UI just reads the final state.
+
 ## Tech stack
 
 - **LLM reasoning** — [Mistral AI](https://mistral.ai/) via `langchain-mistralai`
@@ -50,7 +76,7 @@ The full shared state (search results, scraped content, report, and feedback) is
 ### Installation
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/ag22042008/multi-agent-resarch-pipeline.git
 cd multi-agent-resarch-pipeline
 python -m venv .venv
 source .venv/bin/activate      # Windows: .venv\Scripts\activate
@@ -97,4 +123,4 @@ MIT — feel free to fork and adapt.
 
 ## Author
 
-Built by **[AdityaGupta]** — [https://github.com/ag22042008](#github) · [www.linkedin.com/in/aditya-gupta-205ba9281](#Linkedin)
+Built by **Aditya Gupta** — [GitHub](https://github.com/ag22042008) · [LinkedIn](https://www.linkedin.com/in/aditya-gupta-205ba9281)
