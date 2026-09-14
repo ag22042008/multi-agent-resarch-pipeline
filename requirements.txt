@@ -8,6 +8,7 @@ langgraph>=0.2.0
 
 # --- LLM provider: Mistral AI ---
 langchain-mistralai>=0.2.0
+langchain-groq
 
 # --- Search agent: Tavily ---
 tavily-python>=0.5.0
