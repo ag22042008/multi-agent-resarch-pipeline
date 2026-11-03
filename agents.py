@@ -73,4 +73,4 @@ Areas to Improve:
 One line verdict:
 ...""")
 ])
-critic_chain=critic_prompt|llm.with_fallbacks([fallback_llm)|StrOutputParser()
+critic_chain=critic_prompt|llm.with_fallbacks([fallback_llm])|StrOutputParser()
