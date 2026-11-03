@@ -7,7 +7,18 @@ from tools import web_search,scrape_url# dusre files se function import kr skte 
 from dotenv import load_dotenv
 load_dotenv()
 #model setup
-llm=llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite", temperature=0)
+llm = ChatGoogleGenerativeAI(
+    model="gemini-3.1-flash-lite",
+    max_retries=6,   # 503 pe zyada baar retry karega
+    timeout=60,
+)
+
+# fallback model (alag model pe load alag hota hai)
+fallback_llm = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash-lite",
+    max_retries=6,
+    timeout=60,
+)
 #first Search agent
 def build_search_agent():
     return create_agent(
@@ -38,7 +49,7 @@ Structure the report as:
 
 Be detailed, factual and professional."""
 )])
-writer_chain=writer_prompt|llm|StrOutputParser()
+writer_chain=writer_prompt|llm.with_fallbacks([fallback_llm])|StrOutputParser()
 #critic_chain
 critic_prompt=ChatPromptTemplate.from_messages([
     ("system","You are a sharp and constructive research critic. Be honest and specific."),
@@ -62,4 +73,4 @@ Areas to Improve:
 One line verdict:
 ...""")
 ])
-critic_chain=critic_prompt|llm|StrOutputParser()
+critic_chain=critic_prompt|llm.with_fallbacks([fallback_llm)|StrOutputParser()
