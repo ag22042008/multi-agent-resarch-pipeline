@@ -16,7 +16,7 @@ llm = ChatGoogleGenerativeAI(
 
 # fallback model (alag model pe load alag hota hai)
 fallback_llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash-lite",
+    model="gemini-3.5-flash-lite",
     max_retries=6,
     timeout=60,
 )
