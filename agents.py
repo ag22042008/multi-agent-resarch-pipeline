@@ -1,12 +1,13 @@
 from langchain.agents import create_agent
 from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from tools import web_search,scrape_url# dusre files se function import kr skte hai
 from dotenv import load_dotenv
 load_dotenv()
 #model setup
-llm=ChatGroq(model="openai/gpt-oss-120b",temperature=0)
+llm=llm = ChatGoogleGenerativeAI(model="gemini-3.1-flash-lite", temperature=0)
 #first Search agent
 def build_search_agent():
     return create_agent(
