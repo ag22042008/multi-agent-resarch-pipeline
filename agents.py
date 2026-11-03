@@ -2,6 +2,7 @@ from langchain.agents import create_agent
 from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
+from langchain.agents.middleware import ModelFallbackMiddleware
 from langchain_core.output_parsers import StrOutputParser
 from tools import web_search,scrape_url# dusre files se function import kr skte hai
 from dotenv import load_dotenv
@@ -23,13 +24,15 @@ fallback_llm = ChatGoogleGenerativeAI(
 def build_search_agent():
     return create_agent(
         model=llm,
-        tools=[web_search]
+        tools=[web_search],
+        middleware=[ModelFallbackMiddleware(fallback_llm)],
     )
 #2nd Reader Agent
 def build_reader_agent():
     return create_agent(
         model=llm,
-        tools=[scrape_url]
+        tools=[scrape_url],
+        middleware=[ModelFallbackMiddleware(fallback_llm)],
     )
 #writer chain
 writer_prompt=ChatPromptTemplate.from_messages([
